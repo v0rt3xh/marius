@@ -116,6 +116,8 @@ void SynchronousTrainer::train(int num_epochs) {
 
             if (batch->node_embeddings_.defined()) {
                 batch->node_embeddings_.requires_grad_();
+                SPDLOG_INFO("Embeddings size Dim_0 {} ", batch->node_embeddings_.sizes()[0]);
+                SPDLOG_INFO("Embeddings size Dim_1 {} ", batch->node_embeddings_.sizes()[1]);
             }
 
             batch->dense_graph_.performMap();
