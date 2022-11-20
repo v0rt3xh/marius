@@ -106,8 +106,7 @@ void SynchronousTrainer::train(int num_epochs) {
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-            SPDLOG_INFO("Embeddings size Dim_0 {} ", batch->edges_.sizes()[0]);
-            SPDLOG_INFO("Embeddings size Dim_1 {} ", batch->edges_.sizes()[1]);
+            SPDLOG_INFO("Edge Element", batch->edges_[0][0].item());
             if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                 // transfers batch to the GPU
                 batch->to(model_->device_);
