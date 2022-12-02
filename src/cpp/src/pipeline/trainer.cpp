@@ -99,7 +99,7 @@ void SynchronousTrainer::train(int num_epochs) {
     dataloader_->initializeBatches(false);
 
     Timer timer = Timer(false);
-
+    /**
     for (int epoch = 0; epoch < num_epochs; epoch++) {
         timer.start();
         SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
@@ -164,4 +164,5 @@ void SynchronousTrainer::train(int num_epochs) {
         SPDLOG_INFO("Epoch Runtime: {}ms", epoch_time);
         SPDLOG_INFO("{} per Second: {}", item_name, items_per_second);
     }
+    */
 }
