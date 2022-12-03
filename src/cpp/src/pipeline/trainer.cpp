@@ -100,17 +100,14 @@ void SynchronousTrainer::train(int num_epochs) {
 
     // Timer timer = Timer(false);
     
-    for (int epoch = 0; epoch < 2; epoch++) 
+    while (dataloader_->hasNextBatch())
     {
-        while (dataloader_->hasNextBatch())
-        {
-            // gets data and parameters for the next batch
-            shared_ptr<Batch> batch = dataloader_->getBatch();
-            Indices outNeighbors = batch->dense_graph_.getNumNeighbors(false);
-            float outNeighborsSum = torch::sum(outNeighbors).item<float>();
-            SPDLOG_INFO("OutNeighborsSum is {}", outNeighborsSum);
-            dataloader_->finishedBatch();
-        }
+        // gets data and parameters for the next batch
+        shared_ptr<Batch> batch = dataloader_->getBatch();
+        // Indices outNeighbors = batch->dense_graph_.getNumNeighbors(false);
+        // float outNeighborsSum = torch::sum(outNeighbors).item<float>();
+        SPDLOG_INFO("HAAHAHAH");
+        dataloader_->finishedBatch();
     }
     
     /**
