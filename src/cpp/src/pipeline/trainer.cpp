@@ -106,7 +106,7 @@ void SynchronousTrainer::train(int num_epochs) {
         shared_ptr<Batch> batch = dataloader_->getBatch();
         Indices outNeighbors = batch->dense_graph_.getNumNeighbors(false);
         // float outNeighborsSum = torch::sum(outNeighbors).item<float>();
-        SPDLOG_INFO("HAAHAHAH");
+        SPDLOG_INFO("HAAHAHAH {} ", outNeighbors[0].item<float>());
         dataloader_->finishedBatch();
     }
     
