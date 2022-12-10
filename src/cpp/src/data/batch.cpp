@@ -88,15 +88,19 @@ void Batch::to(torch::Device device) {
 
     status_ = BatchStatus::TransferredToDevice;
 }
-
+// In this case, we want to modify the gradient signal
+// in a way that it do the PageRank updates.
 void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
         node_gradients_ = node_embeddings_.grad();
-        SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
-
-        node_state_update_ = node_gradients_.pow(2);
-        node_embeddings_state_.add_(node_state_update_);
-        node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
+        SPDLOG_INFO("gradientSize Dim 1 {}", node_gradients.sizes()[0]);
+        SPDLOG_INFO("gradientSize Dim 1 {}", node_gradients.sizes()[1]);
+        //SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
+        // Node embedding: (Previous Importance, current increment?, out_degree)
+        //node_state_update_ = node_gradients_.pow(2);
+        //node_embeddings_state_.add_(node_state_update_);
+        // Add node_gradient here
+        //node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
 
         SPDLOG_TRACE("Batch: {} adjusted gradients", batch_id_);
     }
