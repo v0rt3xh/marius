@@ -63,10 +63,12 @@ void Batch::to(torch::Device device) {
     }
 
     if (node_embeddings_.defined()) {
-        node_embeddings_ = node_embeddings_.to(device);
         // Try to initialize the gradients at here. 
         std::cout << "WHAT THE HACK" << std::endl;
         node_gradients_ = torch::zeros(node_embeddings_.sizes()).to(device);
+        node_embeddings_ = node_embeddings_.to(device);
+
+        
     }
 
     if (node_embeddings_state_.defined()) {
