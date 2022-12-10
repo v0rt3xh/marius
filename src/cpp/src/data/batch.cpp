@@ -64,7 +64,7 @@ void Batch::to(torch::Device device) {
 
     if (node_embeddings_.defined()) {
         // Try to initialize the gradients at here. 
-        SPDLOG_INFO("What the Hack?????????/")
+        SPDLOG_INFO("What the Hack?????????/");
         node_gradients_ = torch::zeros(node_embeddings_.sizes());
         node_gradients_ = node_gradients_.to(device);
         node_embeddings_ = node_embeddings_.to(device);
@@ -97,7 +97,6 @@ void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
         //node_gradients_ = node_embeddings_.grad();
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
-
         node_state_update_ = node_gradients_.pow(2);
         node_embeddings_state_.add_(node_state_update_);
         node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
