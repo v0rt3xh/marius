@@ -92,16 +92,16 @@ void Batch::to(torch::Device device) {
 // in a way that it do the PageRank updates.
 void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
-        node_gradients_ = torch::zeros(node_embeddings_.sizes());
+        // Now we have node_embeddings_on GPU, edges on GPU.
+        node_gradients_ = node_embeddings_;
         // SPDLOG_INFO("gradientSize Dim {}", node_embeddings_.sizes()[0]);
         // SPDLOG_INFO("gradientSize Dim {}", node_embeddings_.sizes()[1]);
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
         // Node embedding: (Previous Importance, current increment?, out_degree)
-        node_state_update_ = node_gradients_.pow(2);
+        node_state_update_ = node_gradients_.pow(1);
         node_embeddings_state_.add_(node_state_update_);
         // Add node_gradient here
-        node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
-
+        node_gradients_ = -node_gradients_;
         SPDLOG_TRACE("Batch: {} adjusted gradients", batch_id_);
     }
 
