@@ -99,29 +99,14 @@ void SynchronousTrainer::train(int num_epochs) {
     dataloader_->initializeBatches(false);
 
     Timer timer = Timer(false);
-    /**
-    while (dataloader_->hasNextBatch())
-    {
-        // gets data and parameters for the next batch
-        shared_ptr<Batch> batch = dataloader_->getBatch();
-        // float outNeighborsSum = torch::sum(outNeighbors).item<float>();
-        // Directly call the function to updateEmbeddings?
-        // Also need to make changes to accumulateGradient.
-        //  Batch::accumulateGradients
 
-
-        dataloader_->finishedBatch();
-    }
-    */
-    
-    
     for (int epoch = 0; epoch < num_epochs; epoch++) {
         timer.start();
         SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-            // SPDLOG_INFO("Edge Element {}", batch->edges_[0][0].item<float>());
+
             if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                 // transfers batch to the GPU
                 batch->to(model_->device_);
@@ -178,6 +163,5 @@ void SynchronousTrainer::train(int num_epochs) {
         float items_per_second = (float)num_items / ((float)epoch_time / 1000);
         SPDLOG_INFO("Epoch Runtime: {}ms", epoch_time);
         SPDLOG_INFO("{} per Second: {}", item_name, items_per_second);
-    }
-    
+    }    
 }
