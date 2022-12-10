@@ -64,6 +64,7 @@ void Batch::to(torch::Device device) {
 
     if (node_embeddings_.defined()) {
         node_embeddings_ = node_embeddings_.to(device);
+
     }
 
     if (node_embeddings_state_.defined()) {
@@ -88,8 +89,28 @@ void Batch::to(torch::Device device) {
 
     status_ = BatchStatus::TransferredToDevice;
 }
+
+void Batch::accumulateGradients(float learning_rate) {
+    if (node_embeddings_.defined()) {
+        node_gradients_ = node_embeddings_.grad();
+        SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
+
+        node_state_update_ = node_gradients_.pow(2);
+        node_embeddings_state_.add_(node_state_update_);
+        node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
+
+        SPDLOG_TRACE("Batch: {} adjusted gradients", batch_id_);
+    }
+
+    node_embeddings_state_ = torch::Tensor();
+
+    SPDLOG_TRACE("Batch: {} cleared gpu embeddings and gradients", batch_id_);
+
+    status_ = BatchStatus::AccumulatedGradients;
+}
 // In this case, we want to modify the gradient signal
 // in a way that it do the PageRank updates.
+/**
 void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
         // Now we have node_embeddings_on GPU, edges on GPU.
@@ -111,6 +132,7 @@ void Batch::accumulateGradients(float learning_rate) {
 
     status_ = BatchStatus::AccumulatedGradients;
 }
+*/
 
 void Batch::embeddingsToHost() {
     if (node_gradients_.defined() && node_gradients_.device().is_cuda()) {
