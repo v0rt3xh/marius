@@ -64,7 +64,8 @@ void Batch::to(torch::Device device) {
 
     if (node_embeddings_.defined()) {
         node_embeddings_ = node_embeddings_.to(device);
-
+        // Try to initialize the gradients at here. 
+        //node_gradients_ = torch::zeros(node_embeddings_.sizes()).to(device);
     }
 
     if (node_embeddings_state_.defined()) {
@@ -115,6 +116,13 @@ void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
         // Now we have node_embeddings_on GPU, edges on GPU.
         node_gradients_ = node_embeddings_;
+        for (int i = 0; i < edges_.sizes()[0]; i++) 
+        {
+            for (int j = 0; j < 3; j++) 
+            {
+
+            }
+        }
         // SPDLOG_INFO("gradientSize Dim {}", node_embeddings_.sizes()[0]);
         // SPDLOG_INFO("gradientSize Dim {}", node_embeddings_.sizes()[1]);
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
