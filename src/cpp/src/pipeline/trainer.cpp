@@ -98,7 +98,7 @@ void SynchronousTrainer::train(int num_epochs) {
 
     dataloader_->initializeBatches(false);
 
-    // Timer timer = Timer(false);
+    Timer timer = Timer(false);
     /**
     while (dataloader_->hasNextBatch())
     {
