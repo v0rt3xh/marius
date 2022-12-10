@@ -95,7 +95,7 @@ void Batch::to(torch::Device device) {
 
 void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
-        auto grad_opts = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kGPU);
+        auto grad_opts = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCUDA);
         node_gradients_ = torch::zeros(node_embeddings_.sizes(), grad_opts);
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
         node_state_update_ = node_gradients_.pow(2);
