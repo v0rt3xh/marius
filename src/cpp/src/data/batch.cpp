@@ -100,8 +100,8 @@ void Batch::accumulateGradients(float learning_rate) {
         // How to modify the gradient signals is the problem
         for (int i = 0; i < edges_.sizes()[0]; i++) 
         {
-            int sourceNode = edges_[i][0];
-            int endNode = edges_[i][2];
+            int sourceNode = edges_[i][0].item<int>();
+            int endNode = edges_[i][2].item<int>();
             SPDLOG_INFO("source node {}", sourceNode);  
             SPDLOG_INFO("end node {}", endNode);            
         }
