@@ -102,8 +102,7 @@ void Batch::accumulateGradients(float learning_rate) {
         {
             int sourceNode = edges_[i][0].item<int>();
             int endNode = edges_[i][2].item<int>();
-            SPDLOG_INFO("source node {}", sourceNode);  
-            SPDLOG_INFO("end node {}", endNode);            
+            node_gradients_[endNode][1] += 1e-10;          
         }
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
         node_state_update_ = node_gradients_.pow(2);
