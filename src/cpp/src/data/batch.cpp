@@ -97,6 +97,14 @@ void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
         auto grad_opts = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCUDA);
         node_gradients_ = torch::zeros(node_embeddings_.sizes(), grad_opts);
+        // How to modify the gradient signals is the problem
+        for (int i = 0; i < edges_.sizes()[0]; i++) 
+        {
+            int sourceNode = edges_[i][0];
+            int endNode = edges_[i][2];
+            SPDLOG_INFO("source node {}", sourceNode);  
+            SPDLOG_INFO("end node {}", endNode);            
+        }
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
         node_state_update_ = node_gradients_.pow(2);
         node_embeddings_state_.add_(node_state_update_);
