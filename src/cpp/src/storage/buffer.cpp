@@ -470,6 +470,8 @@ void PartitionBuffer::indexAdd(torch::Tensor indices, torch::Tensor values) {
     }
 }
 
+// Removed for debugging, Dec 13
+/**
 void PartitionBuffer::indexScaleAndZero(torch::Tensor indices) 
 {
     float parameters[] = { 0, 0.15, 0.85};
@@ -489,6 +491,7 @@ void PartitionBuffer::indexScaleAndZero(torch::Tensor indices)
         data_accessor[ids_accessor[i]][1] = para_accessor[0];
     }
 }
+*/
 
 void PartitionBuffer::setBufferOrdering(std::vector<torch::Tensor> buffer_states) {
     buffer_states_ = buffer_states;

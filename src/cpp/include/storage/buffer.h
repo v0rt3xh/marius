@@ -177,8 +177,8 @@ class PartitionBuffer {
     torch::Tensor getGlobalToLocalMap(bool get_current);
 
     void indexAdd(torch::Tensor indices, torch::Tensor values);
-    // PageRank
-    void indexScaleAndZero(torch::Tensor indices);
+    // PageRank, removed for debug Dec.13
+    // void indexScaleAndZero(torch::Tensor indices);
 
     void setBufferOrdering(std::vector<torch::Tensor> buffer_states);
 

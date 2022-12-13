@@ -157,7 +157,7 @@ class DataLoader {
      * Apply column multiplication and swapping after finish one PageRank Iteration
      * 
      */
-    void updateEmbeddings_PR();
+    // void updateEmbeddings_PR();
 
     /**
      * Notify that the epoch has been completed. Prepares dataset for a new epoch.

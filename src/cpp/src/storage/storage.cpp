@@ -176,10 +176,12 @@ torch::Tensor PartitionBufferStorage::indexRead(Indices indices) { return buffer
 void PartitionBufferStorage::indexAdd(Indices indices, torch::Tensor values) { return buffer_->indexAdd(indices, values); }
 
 // PageRank
+/**
 void PartitionBufferStorage::pageRankUpdate(Indices indices) 
 {
     return buffer_->indexScaleAndZero(indices);
 }
+*/
 
 torch::Tensor PartitionBufferStorage::range(int64_t offset, int64_t n) {
     SPDLOG_ERROR("Unsupported operation for PartitionBufferStorage");
@@ -318,11 +320,12 @@ void FlatFile::indexAdd(Indices indices, torch::Tensor values) {
     SPDLOG_ERROR("Unsupported operation for FlatFile, only sequential access is supported");
     throw std::runtime_error("");
 }
-
+/**
 void FlatFile::pageRankUpdate(Indices indices) {
     SPDLOG_ERROR("Unsupported operation for FlatFile, only sequential access is supported");
     throw std::runtime_error("");
 }
+*/
 
 void FlatFile::indexPut(Indices indices, torch::Tensor values) {
     SPDLOG_ERROR("Unsupported operation for FlatFile, only sequential access is supported");
@@ -662,7 +665,7 @@ void InMemory::indexAdd(Indices indices, torch::Tensor values) {
         }
     }
 }
-
+/**
 void InMemory::pageRankUpdate(Indices indices) 
 {
     float parameters[] = { 0, 0.15, 0.85};
@@ -681,6 +684,7 @@ void InMemory::pageRankUpdate(Indices indices)
         data_accessor[ids_accessor[i]][1] = para_accessor[0];
     }
 }
+*/
 
 void InMemory::indexPut(Indices indices, torch::Tensor values) {
     if (!values.defined() || indices.sizes().size() != 1 || indices.size(0) != values.size(0) || data_.size(1) != values.size(1)) {

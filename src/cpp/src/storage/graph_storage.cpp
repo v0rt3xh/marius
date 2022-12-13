@@ -290,11 +290,13 @@ void GraphModelStorage::updateAddNodeEmbeddings(Indices indices, torch::Tensor v
 
 void GraphModelStorage::updatePutEncodedNodes(Indices indices, torch::Tensor values) { storage_ptrs_.encoded_nodes->indexPut(indices, values); }
 
+/** Remove for debugging
 void GraphModelStorage::updateSwapNodeEmbeddings() 
 {
     Indices fullList = torch::arange(num_nodes_);
     storage_ptrs_.node_embeddings->pageRankUpdate(fullList);
 }
+*/
 
 void GraphModelStorage::updatePutEncodedNodesRange(int64_t start, int64_t size, torch::Tensor values) {
     storage_ptrs_.encoded_nodes->rangePut(start, size, values);
