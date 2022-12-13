@@ -319,7 +319,7 @@ void FlatFile::indexAdd(Indices indices, torch::Tensor values) {
     throw std::runtime_error("");
 }
 
-void FlatFile::pageRankUpdate((Indices indices) {
+void FlatFile::pageRankUpdate(Indices indices) {
     SPDLOG_ERROR("Unsupported operation for FlatFile, only sequential access is supported");
     throw std::runtime_error("");
 }
