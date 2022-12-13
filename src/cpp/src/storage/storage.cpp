@@ -319,6 +319,11 @@ void FlatFile::indexAdd(Indices indices, torch::Tensor values) {
     throw std::runtime_error("");
 }
 
+void FlatFile::pageRankUpdate((Indices indices) {
+    SPDLOG_ERROR("Unsupported operation for FlatFile, only sequential access is supported");
+    throw std::runtime_error("");
+}
+
 void FlatFile::indexPut(Indices indices, torch::Tensor values) {
     SPDLOG_ERROR("Unsupported operation for FlatFile, only sequential access is supported");
     throw std::runtime_error("");
@@ -655,6 +660,22 @@ void InMemory::indexAdd(Indices indices, torch::Tensor values) {
                 data_accessor[ids_accessor[i]][j] += values_accessor[i][j];
             }
         }
+    }
+}
+
+void InMemory::pageRankUpdate(Indices indices) 
+{
+    // assumes this operation is only used on float valued data, and this op takes place on the CPU
+    auto data_accessor = data_.accessor<float, 2>();
+    auto ids_accessor = indices.accessor<int64_t, 1>();
+    // With the embedding assumptions.
+    int64_t size = indices.size(0);
+    // No openmp parallelism
+    for (int64_t i = 0; i < size; i++) {
+        data_accessor[ids_accessor[i]][1] *= 0.85;
+        data_accessor[ids_accessor[i]][1] += 0.15;
+        data_accessor[ids_accessor[i]][0] = data_accessor[ids_accessor[i]][1];
+        data_accessor[ids_accessor[i]][1] = 0;
     }
 }
 
