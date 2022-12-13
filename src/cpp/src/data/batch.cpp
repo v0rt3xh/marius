@@ -100,14 +100,17 @@ void Batch::accumulateGradients(float learning_rate) {
         // How to modify the gradient signals is the problem
         for (int i = 0; i < edges_.sizes()[0]; i++) 
         {
+            // Get the global node index
             int sourceNode = edges_[i][0].item<int>();
             int endNode = edges_[i][2].item<int>();
+            // Need a way to map them to the correct indices
+            Indices correctIDs = dense_graph_.getNodeIDs();
             // Assume that in the embeddings: 
             // Column 0: current importance,
             // Column 1: New importance, 
             // Column 2: Out degree of one node.
-            node_gradients_[sourceNode][1] += 1e-9;
-            node_gradients_[endNode][1] += 1e-10;
+            // node_gradients_[sourceNode][1] += 1e-9;
+            // node_gradients_[endNode][1] += 1e-10;
             // node_gradients_[endNode][1] += node_embeddings_[sourceNode][0].item<float>() / (node_embeddings_[sourceNode][2].item<float>() + 1e-3);          
         }
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
