@@ -139,7 +139,8 @@ void SynchronousTrainer::train(int num_epochs) {
 
             batch->clear();
             // Epoch wise Updates
-            dataloader_->updateEmbeddings_PR();
+            // Debug
+            // dataloader_->updateEmbeddings_PR();
             // notify that the batch has been completed
             dataloader_->finishedBatch();
 
