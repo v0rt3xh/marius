@@ -135,6 +135,9 @@ class GraphModelStorage {
     void updatePutNodeEmbeddingState(Indices indices, OptimizerState state);
 
     void updateAddNodeEmbeddingState(Indices indices, torch::Tensor values);
+    
+    // For PageRank only
+    void updateSwapNodeEmbeddings();
 
     bool embeddingsOffDevice();
 

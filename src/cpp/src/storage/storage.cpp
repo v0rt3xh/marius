@@ -175,6 +175,12 @@ torch::Tensor PartitionBufferStorage::indexRead(Indices indices) { return buffer
 
 void PartitionBufferStorage::indexAdd(Indices indices, torch::Tensor values) { return buffer_->indexAdd(indices, values); }
 
+// PageRank
+void PartitionBufferStorage::pageRankUpdate(Indices indices) 
+{
+    return buffer_->indexScaleAndZero(indices);
+}
+
 torch::Tensor PartitionBufferStorage::range(int64_t offset, int64_t n) {
     SPDLOG_ERROR("Unsupported operation for PartitionBufferStorage");
     throw std::runtime_error("");

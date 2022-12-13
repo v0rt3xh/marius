@@ -115,6 +115,8 @@ class PartitionBufferStorage : public Storage {
     torch::Tensor indexRead(Indices indices) override;
 
     void indexAdd(Indices indices, torch::Tensor values) override;
+    // Need this for page rank
+    void pageRankUpdate(Indices indices);
 
     torch::Tensor range(int64_t offset, int64_t n) override;
 

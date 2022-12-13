@@ -470,6 +470,22 @@ void PartitionBuffer::indexAdd(torch::Tensor indices, torch::Tensor values) {
     }
 }
 
+void PartitionBuffer::indexScaleAndZero(torch::Tensor indices) 
+{
+    // assumes this operation is only used on float valued data, and this op takes place on the CPU
+    auto data_accessor = buffer_tensor_view_.accessor<float, 2>();
+    auto ids_accessor = indices.accessor<int64_t, 1>();
+    // With the embedding assumptions.
+    int64_t size = indices.size(0);
+    // No openmp parallelism
+    for (int64_t i = 0; i < size; i++) {
+        data_accessor[ids_accessor[i]][1] *= 0.85;
+        data_accessor[ids_accessor[i]][1] += 0.15;
+        data_accessor[ids_accessor[i]][0] = data_accessor[ids_accessor[i]][1];
+        data_accessor[ids_accessor[i]][1] = 0;
+    }
+}
+
 void PartitionBuffer::setBufferOrdering(std::vector<torch::Tensor> buffer_states) {
     buffer_states_ = buffer_states;
     buffer_state_iterator_ = buffer_states_.begin();

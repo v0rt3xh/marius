@@ -554,6 +554,14 @@ void DataLoader::updateEmbeddings(shared_ptr<Batch> batch, bool gpu) {
     }
 }
 
+void DataLoader::updateEmbeddings_PR() 
+{
+    // Only apply those transformation after we have completed one epoch.
+    // Where are the embeddings though? On CPU or GPU
+    // Should be accessible by the CPU
+    graph_storage_->updateSwapNodeEmbeddings();
+}
+
 void DataLoader::loadStorage() {
     setBufferOrdering();
     graph_storage_->load();

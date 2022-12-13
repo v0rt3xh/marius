@@ -136,8 +136,10 @@ void SynchronousTrainer::train(int num_epochs) {
                 dataloader_->updateEmbeddings(batch, false);
             }
 
-            batch->clear();
 
+            batch->clear();
+            // Epoch wise Updates
+            dataloader_->updateEmbeddings_PR();
             // notify that the batch has been completed
             dataloader_->finishedBatch();
 
@@ -145,7 +147,14 @@ void SynchronousTrainer::train(int num_epochs) {
             progress_reporter_->addResult(batch->batch_size_);
         }
         SPDLOG_INFO("################ Finished training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
-
+        // For pagerank, we need to times 0.85, then add 0.15 for a given entry.
+        // Also we need to swap the dimension of the node embeddings:
+        //  // Assume that in the embeddings: 
+            // Column 0: current importance,
+            // Column 1: New importance, 
+            // Column 2: Out degree of one node.
+        /** TODO: Swap column 0, column 1!*/
+        
         // notify that the epoch has been completed
         dataloader_->nextEpoch();
         progress_reporter_->clear();

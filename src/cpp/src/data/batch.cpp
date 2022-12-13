@@ -102,12 +102,16 @@ void Batch::accumulateGradients(float learning_rate) {
         {
             int sourceNode = edges_[i][0].item<int>();
             int endNode = edges_[i][2].item<int>();
-            node_gradients_[endNode][1] += 1e-10;          
+            // Assume that in the embeddings: 
+            // Column 0: current importance,
+            // Column 1: New importance, 
+            // Column 2: Out degree of one node.
+            node_gradients_[endNode][1] += node_embeddings[sourceNode][0].item<float>() / (node_embeddings[sourceNode][2].item<float>() + 1);          
         }
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
-        node_state_update_ = node_gradients_.pow(2);
-        node_embeddings_state_.add_(node_state_update_);
-        node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
+        // node_state_update_ = node_gradients_.pow(2);
+        // node_embeddings_state_.add_(node_state_update_);
+        // node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
 
         SPDLOG_TRACE("Batch: {} adjusted gradients", batch_id_);
     }
