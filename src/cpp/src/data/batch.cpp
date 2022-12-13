@@ -104,7 +104,6 @@ void Batch::accumulateGradients(float learning_rate) {
             int sourceNode = edges_[i][0].item<int>();
             int endNode = edges_[i][2].item<int>();
             // Need a way to map them to the correct indices
-            Indices correctIDs = dense_graph_.getNodeIDs();
             // Assume that in the embeddings: 
             // Column 0: current importance,
             // Column 1: New importance, 
