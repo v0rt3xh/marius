@@ -672,9 +672,10 @@ void InMemory::pageRankUpdate(Indices indices)
     int64_t size = indices.size(0);
     // No openmp parallelism
     for (int64_t i = 0; i < size; i++) {
-        data_accessor[ids_accessor[i]][1] *= 0.85;
-        data_accessor[ids_accessor[i]][1] += 0.15;
-        data_accessor[ids_accessor[i]][0] = data_accessor[ids_accessor[i]][1];
+        float currentImportance = data_accessor[ids_accessor[i]][1].item<float>();
+        currentImportance *= 0.85;
+        currentImportance += 0.15;
+        data_accessor[ids_accessor[i]][0] = currentImportance;
         data_accessor[ids_accessor[i]][1] = 0;
     }
 }
