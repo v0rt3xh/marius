@@ -121,9 +121,12 @@ void SynchronousTrainer::train(int num_epochs) {
             batch->dense_graph_.performMap();
 
             // compute forward and backward pass of the model
-            model_->train_batch(batch);
+            // modify to be pr
+            // model_->train_batch(batch);
+            model_->train_pr(batch);
 
             // transfer gradients and update parameters
+            /** Do nothing now
             if (batch->node_embeddings_.defined()) {
                 if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                     batch->embeddingsToHost();
@@ -133,6 +136,7 @@ void SynchronousTrainer::train(int num_epochs) {
 
                 dataloader_->updateEmbeddings(batch, false);
             }
+            */
 
             batch->clear();
 

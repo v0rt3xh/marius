@@ -289,7 +289,19 @@ std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor> Model::fo
 
 void Model::train_pr(shared_ptr<Batch> batch) 
 {
-
+    torch::Tensor src; 
+    torch::Tensor dst; 
+    if (batch->node_embeddings_.defined()) 
+    {
+        src = edges.select(1, 0);
+        dst = edges.select(1, -1);
+        SPDLOG_INFO("Node embedding Size 0: {} ", node_embeddings_.size(0));
+        SPDLOG_INFO("Node embedding Size 1: {} ", node_embeddings_.size(1));
+        SPDLOG_INFO("Source Size 0: {} ", src.size(0));
+        SPDLOG_INFO("Source Size 1: {} ", src.size(1));
+        SPDLOG_INFO("Destination Size 0: {} ", dst.size(0));
+        SPDLOG_INFO("Destination Size 1: {} ", dst.size(1));
+    }
 }
 
 void Model::train_batch(shared_ptr<Batch> batch, bool call_step) {
