@@ -287,9 +287,9 @@ std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor> Model::fo
     return std::forward_as_tuple(pos_scores, neg_scores, inv_pos_scores, inv_neg_scores);
 }
 
-void Model::forward_pr(shared_ptr<Batch> batch, bool train) 
+void Model::train_pr(shared_ptr<Batch> batch) 
 {
-    
+
 }
 
 void Model::train_batch(shared_ptr<Batch> batch, bool call_step) {
