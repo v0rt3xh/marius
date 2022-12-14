@@ -31,18 +31,18 @@ storage:
   save_model: true
 training:
   batch_size: 1000
-  #negative_sampling:
-    #num_chunks: 10
-    #negatives_per_positive: 500
-    #degree_fraction: 0.0
-    #filtered: false
+  negative_sampling:
+    num_chunks: 1
+    negatives_per_positive: 0
+    degree_fraction: 0.0
+    filtered: false
   num_epochs: 10
   pipeline:
     sync: true
   epochs_per_shuffle: 1
 evaluation:
   batch_size: 1000
-  #negative_sampling:
-    #filtered: true
+  negative_sampling:
+    filtered: true
   pipeline:
     sync: true
