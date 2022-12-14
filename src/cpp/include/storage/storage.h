@@ -54,8 +54,6 @@ class Storage {
     virtual torch::Tensor range(int64_t offset, int64_t n) = 0;
 
     virtual void indexPut(Indices indices, torch::Tensor values) = 0;
-    
-    // virtual void pageRankUpdate(Indices indices) = 0;
 
     virtual void rangePut(int64_t offset, int64_t n, torch::Tensor values) = 0;
 
@@ -117,10 +115,6 @@ class PartitionBufferStorage : public Storage {
     torch::Tensor indexRead(Indices indices) override;
 
     void indexAdd(Indices indices, torch::Tensor values) override;
-    
-    // Need this for page rank
-
-    // void pageRankUpdate(Indices indices) override;
 
     torch::Tensor range(int64_t offset, int64_t n) override;
 
@@ -181,8 +175,6 @@ class FlatFile : public Storage {
 
     void indexAdd(Indices indices, torch::Tensor values) override;
 
-    // void pageRankUpdate(Indices indices) override;
-
     torch::Tensor range(int64_t offset, int64_t n) override;
 
     void indexPut(Indices indices, torch::Tensor values) override;
@@ -229,8 +221,6 @@ class InMemory : public Storage {
     torch::Tensor indexRead(Indices indices) override;
 
     void indexAdd(Indices indices, torch::Tensor values) override;
-
-    // void pageRankUpdate(Indices indices) override;
 
     torch::Tensor range(int64_t offset, int64_t n) override;
 

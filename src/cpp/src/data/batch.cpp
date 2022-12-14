@@ -63,10 +63,6 @@ void Batch::to(torch::Device device) {
     }
 
     if (node_embeddings_.defined()) {
-        // Try to initialize the gradients at here. 
-        //SPDLOG_INFO("What the Hack?????????/");
-        //node_gradients_ = torch::zeros(node_embeddings_.sizes());
-        //node_gradients_ = node_gradients_.to(device);
         node_embeddings_ = node_embeddings_.to(device);
     }
 
@@ -95,61 +91,13 @@ void Batch::to(torch::Device device) {
 
 void Batch::accumulateGradients(float learning_rate) {
     if (node_embeddings_.defined()) {
-        auto grad_opts = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCUDA);
-        node_gradients_ = torch::zeros(node_embeddings_.sizes(), grad_opts);
-        // How to modify the gradient signals is the problem
-        for (int i = 0; i < edges_.sizes()[0]; i++) 
-        {
-            // Get the global node index
-            int sourceNode = edges_[i][0].item<int>();
-            int endNode = edges_[i][2].item<int>();
-            // Need a way to map them to the correct indices
-            // Assume that in the embeddings: 
-            // Column 0: current importance,
-            // Column 1: New importance, 
-            // Column 2: Out degree of one node.
-            // node_gradients_[sourceNode][1] += 1e-9;
-            // node_gradients_[endNode][1] += 1e-10;
-            // node_gradients_[endNode][1] += node_embeddings_[sourceNode][0].item<float>() / (node_embeddings_[sourceNode][2].item<float>() + 1e-3);          
-        }
+        node_gradients_ = node_embeddings_.grad();
         SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
-        // node_state_update_ = node_gradients_.pow(2);
-        // node_embeddings_state_.add_(node_state_update_);
-        // node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
 
-        SPDLOG_TRACE("Batch: {} adjusted gradients", batch_id_);
-    }
-
-    node_embeddings_state_ = torch::Tensor();
-
-    SPDLOG_TRACE("Batch: {} cleared gpu embeddings and gradients", batch_id_);
-
-    status_ = BatchStatus::AccumulatedGradients;
-}
-// In this case, we want to modify the gradient signal
-// in a way that it do the PageRank updates.
-/**
-void Batch::accumulateGradients(float learning_rate) {
-    if (node_embeddings_.defined()) {
-        // Now we have node_embeddings_on GPU, edges on GPU.
-        node_gradients_ = node_embeddings_;
-        for (int i = 0; i < edges_.sizes()[0]; i++) 
-        {
-            for (int j = 0; j < 3; j++) 
-            {
-                int sourceNode = edges_[i][0];
-                int endNode = edges_[i][2];
-
-            }
-        }
-        // SPDLOG_INFO("gradientSize Dim {}", node_embeddings_.sizes()[0]);
-        // SPDLOG_INFO("gradientSize Dim {}", node_embeddings_.sizes()[1]);
-        SPDLOG_TRACE("Batch: {} accumulated node gradients", batch_id_);
-        // Node embedding: (Previous Importance, current increment?, out_degree)
-        node_state_update_ = node_gradients_.pow(1);
+        node_state_update_ = node_gradients_.pow(2);
         node_embeddings_state_.add_(node_state_update_);
-        // Add node_gradient here
-        node_gradients_ = -node_gradients_;
+        node_gradients_ = -learning_rate * (node_gradients_ / (node_embeddings_state_.sqrt().add_(1e-10)));
+
         SPDLOG_TRACE("Batch: {} adjusted gradients", batch_id_);
     }
 
@@ -159,7 +107,6 @@ void Batch::accumulateGradients(float learning_rate) {
 
     status_ = BatchStatus::AccumulatedGradients;
 }
-*/
 
 void Batch::embeddingsToHost() {
     if (node_gradients_.defined() && node_gradients_.device().is_cuda()) {
