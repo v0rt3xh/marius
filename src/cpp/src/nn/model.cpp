@@ -296,11 +296,11 @@ void Model::train_pr(shared_ptr<Batch> batch)
         src = batch->edges_.select(1, 0);
         dst = batch->edges_.select(1, -1);
         SPDLOG_INFO("Node embedding Size 0: {} ", batch->node_embeddings_.size(0));
-        SPDLOG_INFO("Node embedding Size 1: {} ", batch->node_embeddings_.size(1));
+        SPDLOG_INFO("Node embedding Size 1: {} ", batch->node_embeddings_.size(-1));
         SPDLOG_INFO("Source Size 0: {} ", src.size(0));
-        SPDLOG_INFO("Source Size 1: {} ", src.size(1));
+        SPDLOG_INFO("Source Size 1: {} ", src.size(-1));
         SPDLOG_INFO("Destination Size 0: {} ", dst.size(0));
-        SPDLOG_INFO("Destination Size 1: {} ", dst.size(1));
+        SPDLOG_INFO("Destination Size 1: {} ", dst.size(-1));
     }
 }
 
