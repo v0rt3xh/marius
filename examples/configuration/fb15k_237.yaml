@@ -33,7 +33,7 @@ training:
   batch_size: 1000
   negative_sampling:
     num_chunks: 1
-    negatives_per_positive: 0
+    negatives_per_positive: -1
     degree_fraction: 0.0
     filtered: false
   num_epochs: 10
