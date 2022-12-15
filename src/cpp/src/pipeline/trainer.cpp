@@ -116,7 +116,7 @@ void SynchronousTrainer::train(int num_epochs) {
             }
             */
 
-           // dataloader_->loadCPUParameters(batch);
+           dataloader_->loadCPUParameters(batch);
             /**
             if (batch->node_embeddings_.defined()) {
                 batch->node_embeddings_.requires_grad_();
