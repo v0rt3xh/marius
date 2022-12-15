@@ -106,15 +106,15 @@ void SynchronousTrainer::train(int num_epochs) {
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-            /**
+            
             if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                 // transfers batch to the GPU
                 batch->to(model_->device_);
             } else {
                 dataloader_->loadGPUParameters(batch);
             }
-            */
-           dataloader_->loadCPUParameters(batch);
+            
+           // dataloader_->loadCPUParameters(batch);
             /**
             if (batch->node_embeddings_.defined()) {
                 batch->node_embeddings_.requires_grad_();
