@@ -125,11 +125,15 @@ void SynchronousTrainer::train(int num_epochs) {
             // Need this function to let things work, maybe
             // batch->embeddingsToHost();
             // Directly start updates.
+            if (dataloader_->graph_storage_->embeddingsOffDevice()) {
+                batch->embeddingsToHost();
+                SPDLOG_INFO("============Hello!=========");
+            }
             torch::Tensor src; 
             torch::Tensor dst;
             //if (batch->node_embeddings_.defined()) 
             //{
-                SPDLOG_INFO("============Hello!=========");
+                
                 src = batch->edges_.select(1, 0);
                 dst = batch->edges_.select(1, -1);
             
