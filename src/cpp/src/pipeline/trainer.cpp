@@ -139,9 +139,8 @@ void SynchronousTrainer::train(int num_epochs) {
                 // Need to do the right updates on this batch.
                 // We directly initialize the gradients here. 
                 long sizeOfBatch = src.size(0);
-                SPDLOG_INFO("Batch Size is {}", sizeOfBatch);
-                SPDLOG_INFO("Embedding Dim 0 is {}", batch->node_embeddings_.size(0));
-                SPDLOG_INFO("Embedding Dim 1 is {}", batch->node_embeddings_.size(-1));
+//                SPDLOG_INFO("Embedding Dim 0 is {}", batch->node_embeddings_.size(0));
+//                SPDLOG_INFO("Embedding Dim 1 is {}", batch->node_embeddings_.size(-1));
 
                 // Create the gradient matrix, needed??
                 // batch->node_gradients_ = torch::zeros(node_embeddings_.sizes());
@@ -157,6 +156,7 @@ void SynchronousTrainer::train(int num_epochs) {
                     //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
                     // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
+                SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
             } 
             // modify to be pr
             // model_->train_batch(batch);
@@ -174,6 +174,19 @@ void SynchronousTrainer::train(int num_epochs) {
                 dataloader_->updateEmbeddings(batch, false);
             }
             */
+            // In the case of PageRank, we gotta update the embeddings once more :)
+            if (batch->node_embeddings_.defined() && dataloader_->batches_left_ == 1) 
+            {
+                auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
+                for (long i = 0; i < node_embeddings_.size(0); i++) 
+                {
+                    
+                    embeddingAccess[i][1] *= 0.85;
+                    embeddingAccess[i][1] += 0.15;
+                    embeddingAccess[i][0] = embeddingAccess[i][1];
+                    embeddingAccess[i][1] = 0;
+                }
+            }
 
             batch->clear();
 
@@ -184,7 +197,7 @@ void SynchronousTrainer::train(int num_epochs) {
             progress_reporter_->addResult(batch->batch_size_);
         }
         SPDLOG_INFO("################ Finished training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
-
+        
         // notify that the epoch has been completed
         dataloader_->nextEpoch();
         progress_reporter_->clear();
