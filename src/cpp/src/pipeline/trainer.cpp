@@ -126,8 +126,8 @@ void SynchronousTrainer::train(int num_epochs) {
             // Directly start updates.
             torch::Tensor src; 
             torch::Tensor dst;
-            if (batch->node_embeddings_.defined()) 
-            {
+            //if (batch->node_embeddings_.defined()) 
+            //{
                 SPDLOG_INFO("============Hello!=========");
                 src = batch->edges_.select(1, 0);
                 dst = batch->edges_.select(1, -1);
@@ -149,7 +149,7 @@ void SynchronousTrainer::train(int num_epochs) {
                     //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
                     // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
-            } 
+            //} 
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
