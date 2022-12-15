@@ -214,13 +214,33 @@ void SynchronousTrainer::train(int num_epochs) {
             // model_->train_pr(batch);
             if (batch->node_embeddings_.defined()) 
             {
-                SPDLOG_INFO("Sounds good!");
                 if (dataloader_->graph_storage_->embeddingsOffDevice()) 
                 {
                     batch->embeddingsToHost();
                 }
                 dataloader_->updateEmbeddings(batch, false);
             } 
+            // We need to do a final update, if at the end of one epoch.
+            if (dataloader_->batches_left_ == 1) 
+            {
+                SPDLOG_INFO("Sounds good!");
+                batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
+                auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
+                auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
+                for (int i = 0; i < batch->node_embeddings_.size(0); i++) 
+                {
+                    auto currentImportance = embeddingAccess[i][1];
+                    auto prevImportance = embeddingAccess[i][0];
+                    gradientAccess[i][0] = currentImportance * 0.85 + 0.15 - prevImportance;
+                    // Restore the embedding 
+                    gradientAccess[i][1] = -currentImportance; 
+                }
+                if (dataloader_->graph_storage_->embeddingsOffDevice()) 
+                {
+                    batch->embeddingsToHost();
+                }
+                dataloader_->updateEmbeddings(batch, false);
+            }
             // transfer gradients and update parameters
             /** Do nothing now
             if (batch->node_embeddings_.defined()) {
