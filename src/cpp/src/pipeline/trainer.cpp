@@ -154,7 +154,7 @@ void SynchronousTrainer::train(int num_epochs) {
                 for (long i = 0; i < sizeOfBatch; i++) 
                 {
                     auto tmpGradient = gradientAccess[dstAccess[i]][1];
-                    tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1);
+                    tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 10);
                     gradientAccess[dstAccess[i]][1] = tmpGradient;
                 }
                 // gradientAccess[0][1] += 0.00005;
