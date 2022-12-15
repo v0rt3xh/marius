@@ -167,7 +167,7 @@ void SynchronousTrainer::train(int num_epochs) {
                 // batch->node_gradients_ = torch::empty(1);
             }
             // Checkout the potential error:
-            if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->device_ != torch::kCUDA) 
+/*             if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->device_ != torch::kCUDA) 
             {
                SPDLOG_INFO("Hot spot 1 passed"); 
             }
@@ -208,12 +208,13 @@ void SynchronousTrainer::train(int num_epochs) {
             {
                 SPDLOG_INFO("Hot spot 5 failed, buffer size {}", dataloader_->graph_storage_->storage_ptrs_.node_embeddings->data_.size(1)); 
                 SPDLOG_INFO("Hot spot 5 failed, gradient size {}", batch->node_gradients_.size(1));
-            }
+            } */
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
             if (batch->node_embeddings_.defined()) 
             {
+                SPDLOG_INFO("Sounds good!");
                 if (dataloader_->graph_storage_->embeddingsOffDevice()) 
                 {
                     batch->embeddingsToHost();
