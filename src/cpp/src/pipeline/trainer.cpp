@@ -130,23 +130,24 @@ void SynchronousTrainer::train(int num_epochs) {
             {
                 src = batch->edges_.select(1, 0);
                 dst = batch->edges_.select(1, -1);
+            
+                // Need to do the right updates on this batch.
+                // We directly initialize the gradients here. 
+                int sizeOfBatch = src.size(0);
+                // Create the gradient matrix, needed??
+                // batch->node_gradients_ = torch::zeros(node_embeddings_.sizes());
+                // Use efficient accessor:
+                auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
+                //auto gradAccess = batch->node_gradients_.accessor<float,2>();
+                auto srcAccess = src.accessor<int, 1>();
+                auto dstAccess = dst.accessor<int, 1>();
+                // compute the updates for pagerank
+                for (int i = 0; i < sizeOfBatch; i++) 
+                {
+                    SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
+                    SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
+                }
             } 
-            // Need to do the right updates on this batch.
-            // We directly initialize the gradients here. 
-            int sizeOfBatch = src.size(0);
-            // Create the gradient matrix
-            batch->node_gradients_ = torch::zeros(node_embeddings_.sizes());
-            // Use efficient accessor:
-            auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
-            //auto gradAccess = batch->node_gradients_.accessor<float,2>();
-            auto srcAccess = src.accessor<int, 1>();
-            auto dstAccess = dst.accessor<int, 1>();
-            // compute the updates for pagerank
-            for (int i = 0; i < sizeOfBatch; i++) 
-            {
-                SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
-                SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
-            }
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
