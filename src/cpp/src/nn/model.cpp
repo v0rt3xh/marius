@@ -287,7 +287,7 @@ std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor> Model::fo
     return std::forward_as_tuple(pos_scores, neg_scores, inv_pos_scores, inv_neg_scores);
 }
 
-void Model::train_pr(shared_ptr<Batch> batch) 
+/* void Model::train_pr(shared_ptr<Batch> batch) 
 {
     torch::Tensor src; 
     torch::Tensor dst; 
@@ -295,6 +295,19 @@ void Model::train_pr(shared_ptr<Batch> batch)
     {
         src = batch->edges_.select(1, 0);
         dst = batch->edges_.select(1, -1);
+        // Need to do the right updates on this batch.
+        // We directly initialize the gradients here. 
+        int sizeOfBatch = src.size(0);
+        // Create the gradient matrix
+        auto grad_opts = torch::TensorOptions().dtype(torch::kFloat32).device(torch::kCUDA);
+        batch->node_gradients_ = torch::zeros(node_embeddings_.sizes(), grad_opts);
+        // Use efficient accessor:
+        auto gradAccess = batch->node_gradients_.accessor<float,2>();
+        auto srcAccess = batch->edges_ 
+        for (int i = 0; i < sizeOfBatch; i++) 
+        {
+            gradAccess[][] = 
+        }
         SPDLOG_INFO("Node embedding Size 0: {} ", batch->node_embeddings_.size(0));
         SPDLOG_INFO("Node embedding Size 1: {} ", batch->node_embeddings_.size(-1));
         SPDLOG_INFO("Source Size 0: {} ", src.size(0));
@@ -302,7 +315,7 @@ void Model::train_pr(shared_ptr<Batch> batch)
         SPDLOG_INFO("Destination Size 0: {} ", dst.size(0));
         SPDLOG_INFO("Destination Size 1: {} ", dst.size(-1));
     }
-}
+} */
 
 void Model::train_batch(shared_ptr<Batch> batch, bool call_step) {
     if (call_step) {

@@ -35,7 +35,7 @@ class Model : public torch::nn::Module {
 
     std::tuple<torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor> forward_lp(shared_ptr<Batch> batch, bool train);
 
-    void train_pr(shared_ptr<Batch> batch);
+    // void train_pr(shared_ptr<Batch> batch);
 
     void train_batch(shared_ptr<Batch> batch, bool call_step = true);
 

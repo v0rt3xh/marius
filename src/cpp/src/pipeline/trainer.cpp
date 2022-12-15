@@ -106,24 +106,27 @@ void SynchronousTrainer::train(int num_epochs) {
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-
+            /**
             if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                 // transfers batch to the GPU
                 batch->to(model_->device_);
             } else {
                 dataloader_->loadGPUParameters(batch);
             }
-
+            */
+           
+            /**
             if (batch->node_embeddings_.defined()) {
                 batch->node_embeddings_.requires_grad_();
             }
+            */
 
             batch->dense_graph_.performMap();
 
             // compute forward and backward pass of the model
             // modify to be pr
             // model_->train_batch(batch);
-            model_->train_pr(batch);
+            // model_->train_pr(batch);
 
             // transfer gradients and update parameters
             /** Do nothing now
