@@ -154,7 +154,7 @@ void SynchronousTrainer::train(int num_epochs) {
                 for (long i = 0; i < sizeOfBatch; i++) 
                 {
                     auto tmpGradient = gradientAccess[dstAccess[i]][1];
-                    tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
+                    tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1);
                     gradientAccess[dstAccess[i]][1] = tmpGradient;
                 }
                 // gradientAccess[0][1] += 0.00005;
@@ -223,7 +223,7 @@ void SynchronousTrainer::train(int num_epochs) {
             // We need to do a final update, if at the end of one epoch.
             if (dataloader_->batches_left_ == 1) 
             {
-                SPDLOG_INFO("Sounds good!");
+                SPDLOG_INFO("========Reaches the end of an epoch, performs importance swapping.");
                 batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
                 auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
                 auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
