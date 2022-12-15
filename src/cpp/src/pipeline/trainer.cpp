@@ -114,16 +114,39 @@ void SynchronousTrainer::train(int num_epochs) {
                 dataloader_->loadGPUParameters(batch);
             }
             */
-           
+
             /**
             if (batch->node_embeddings_.defined()) {
                 batch->node_embeddings_.requires_grad_();
             }
             */
 
-            batch->dense_graph_.performMap();
+            batch->dense_graph_.performMap();   
 
-            // compute forward and backward pass of the model
+            // Directly start updates.
+            torch::Tensor src; 
+            torch::Tensor dst;
+            if (batch->node_embeddings_.defined()) 
+            {
+                src = batch->edges_.select(1, 0);
+                dst = batch->edges_.select(1, -1);
+            } 
+            // Need to do the right updates on this batch.
+            // We directly initialize the gradients here. 
+            int sizeOfBatch = src.size(0);
+            // Create the gradient matrix
+            batch->node_gradients_ = torch::zeros(node_embeddings_.sizes());
+            // Use efficient accessor:
+            auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
+            //auto gradAccess = batch->node_gradients_.accessor<float,2>();
+            auto srcAccess = src.accessor<int, 1>();
+            auto dstAccess = dst.accessor<int, 1>();
+            // compute the updates for pagerank
+            for (int i = 0; i < sizeOfBatch; i++) 
+            {
+                SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
+                SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
+            }
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
