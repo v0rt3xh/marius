@@ -270,6 +270,7 @@ void SynchronousTrainer::train(int num_epochs) {
                 }
             }
             */
+            // Clear batch here, not immediately after updating!
             batch->clear();
 
             // notify that the batch has been completed

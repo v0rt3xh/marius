@@ -550,7 +550,7 @@ void DataLoader::updateEmbeddings(shared_ptr<Batch> batch, bool gpu) {
             graph_storage_->updateAddNodeEmbeddings(batch->unique_node_indices_, batch->node_gradients_);
             // graph_storage_->updateAddNodeEmbeddingState(batch->unique_node_indices_, batch->node_state_update_);
         }
-        batch->clear();
+        // batch->clear();
     }
 }
 
