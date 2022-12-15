@@ -159,7 +159,7 @@ void SynchronousTrainer::train(int num_epochs) {
                 }
                 // gradientAccess[0][1] += 0.00005;
                 // SPDLOG_INFO("Test Gradient #1 {}", gradientAccess[0][1]);
-                // SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
+                SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][1]);
                 // SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
                 // SPDLOG_INFO("Gradient dim {}", batch->node_gradients_ .size(0));
                 // Maybe something is wrong with updateEmbeddings?
