@@ -106,7 +106,7 @@ void SynchronousTrainer::train(int num_epochs) {
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-            
+
             /**
             if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                 // transfers batch to the GPU
@@ -153,7 +153,7 @@ void SynchronousTrainer::train(int num_epochs) {
                 // compute the updates for pagerank
                 for (long i = 0; i < sizeOfBatch; i++) 
                 {
-                    embeddingAccess[dstAccess[i]][1] += 1e-3;
+                    embeddingAccess[dstAccess[i]][1] += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
                     //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
                     // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
