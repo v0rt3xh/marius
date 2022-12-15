@@ -158,8 +158,10 @@ void SynchronousTrainer::train(int num_epochs) {
                     // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
                 SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
+                SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
+                SPDLOG_INFO("Gradient dim {}", batch->node_gradients_ .size(0));
                 dataloader_->updateEmbeddings(batch, false);
-                batch->node_gradients_ = torch::empty(1);
+                // batch->node_gradients_ = torch::empty(1);
             }
             // modify to be pr
             // model_->train_batch(batch);
