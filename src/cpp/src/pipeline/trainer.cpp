@@ -157,6 +157,7 @@ void SynchronousTrainer::train(int num_epochs) {
                     tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
                     gradientAccess[dstAccess[i]][1] = tmpGradient;
                 }
+                gradientAccess[0][1] += 0.00005;
                 SPDLOG_INFO("Test Gradient #1 {}", gradientAccess[0][1]);
                 // SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
                 // SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
@@ -168,6 +169,7 @@ void SynchronousTrainer::train(int num_epochs) {
             if(batch->node_gradients_.defined()) 
             {
                 auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
+                gradientAccess[0][1] += 0.00005;
                 SPDLOG_INFO("Test Gradient #2 {}", gradientAccess[0][1]);
             } 
             // modify to be pr
