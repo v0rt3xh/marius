@@ -135,6 +135,10 @@ void SynchronousTrainer::train(int num_epochs) {
                 // Need to do the right updates on this batch.
                 // We directly initialize the gradients here. 
                 int sizeOfBatch = src.size(0);
+                SPDLOG_INFO("Batch Size is {}", sizeOfBatch);
+                SPDLOG_INFO("Embedding Dim 0 is {}", node_embeddings_.size(0));
+                SPDLOG_INFO("Embedding Dim 1 is {}", node_embeddings_.size(-1));
+
                 // Create the gradient matrix, needed??
                 // batch->node_gradients_ = torch::zeros(node_embeddings_.sizes());
                 // Use efficient accessor:
