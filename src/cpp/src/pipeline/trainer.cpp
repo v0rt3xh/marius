@@ -153,7 +153,9 @@ void SynchronousTrainer::train(int num_epochs) {
                 // compute the updates for pagerank
                 for (long i = 0; i < sizeOfBatch; i++) 
                 {
-                    gradientAccess[dstAccess[i]][1] += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
+                    auto tmpGradient = gradientAccess[dstAccess[i]][1];
+                    tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
+                    gradientAccess[dstAccess[i]][1] = tmpGradient;
                     //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
                     // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
@@ -161,7 +163,8 @@ void SynchronousTrainer::train(int num_epochs) {
                 SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
                 // SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
                 // SPDLOG_INFO("Gradient dim {}", batch->node_gradients_ .size(0));
-                dataloader_->updateEmbeddings(batch, false);
+                // Maybe something is wrong with updateEmbeddings?
+                // dataloader_->updateEmbeddings(batch, false);
                 // batch->node_gradients_ = torch::empty(1);
             }
             // modify to be pr
