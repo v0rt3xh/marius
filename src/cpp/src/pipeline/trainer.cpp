@@ -136,7 +136,7 @@ void SynchronousTrainer::train(int num_epochs) {
             
                 // Need to do the right updates on this batch.
                 // We directly initialize the gradients here. 
-                int sizeOfBatch = src.size(0);
+                long sizeOfBatch = src.size(0);
                 SPDLOG_INFO("Batch Size is {}", sizeOfBatch);
                 SPDLOG_INFO("Embedding Dim 0 is {}", batch->node_embeddings_.size(0));
                 SPDLOG_INFO("Embedding Dim 1 is {}", batch->node_embeddings_.size(-1));
@@ -146,10 +146,10 @@ void SynchronousTrainer::train(int num_epochs) {
                 // Use efficient accessor:
                 auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
                 //auto gradAccess = batch->node_gradients_.accessor<float,2>();
-                auto srcAccess = src.accessor<int, 1>();
-                auto dstAccess = dst.accessor<int, 1>();
+                auto srcAccess = src.accessor<long, 1>();
+                auto dstAccess = dst.accessor<long, 1>();
                 // compute the updates for pagerank
-                for (int i = 0; i < sizeOfBatch; i++) 
+                for (long i = 0; i < sizeOfBatch; i++) 
                 {
                     embeddingAccess[dstAccess[i]][1] += 1e-3;
                     //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
