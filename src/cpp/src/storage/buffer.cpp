@@ -451,6 +451,11 @@ Indices PartitionBuffer::getRandomIds(int64_t size) { return torch::randint(in_b
 void PartitionBuffer::indexAdd(torch::Tensor indices, torch::Tensor values) {
     if (!values.defined() || indices.sizes().size() != 1 || indices.size(0) != values.size(0) || buffer_tensor_view_.size(1) != values.size(1)) {
         // TODO: throw invalid inputs for function error
+        SPDLOG_INFO("GG well played {} ", indices.sizes().size());
+        SPDLOG_INFO("Indices size {} ", indices.size(0));
+        SPDLOG_INFO("values size {} ", values.size(0));
+        SPDLOG_INFO("Buffer size {} ", buffer_tensor_view_.size(1));
+        SPDLOG_INFO("values size 1 {} ", values.size(1));
         throw std::runtime_error("");
     }
     // buffer_tensor_view_.index_add_(0, indices, values);

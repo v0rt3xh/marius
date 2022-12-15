@@ -548,7 +548,7 @@ void DataLoader::updateEmbeddings(shared_ptr<Batch> batch, bool gpu) {
         // batch->host_transfer_.synchronize();
         if (graph_storage_->storage_ptrs_.node_embeddings->device_ != torch::kCUDA) {
             graph_storage_->updateAddNodeEmbeddings(batch->unique_node_indices_, batch->node_gradients_);
-            graph_storage_->updateAddNodeEmbeddingState(batch->unique_node_indices_, batch->node_state_update_);
+            // graph_storage_->updateAddNodeEmbeddingState(batch->unique_node_indices_, batch->node_state_update_);
         }
         batch->clear();
     }
