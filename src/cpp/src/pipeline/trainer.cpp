@@ -200,14 +200,14 @@ void SynchronousTrainer::train(int num_epochs) {
             {
                SPDLOG_INFO("Hot spot 4 failed with no defined gradients");  
             }
-            if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->buffer_->buffer_tensor_view_.size(1) == values.size(1)) 
+            if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->data_.size(1) == batch->node_gradients_.size(1)) 
             {
                 SPDLOG_INFO("Hot spot 5 passed"); 
             }
             else 
             {
-                SPDLOG_INFO("Hot spot 5 failed, buffer size {}", dataloader_->graph_storage_->storage_ptrs_.node_embeddings->buffer_->buffer_tensor_view_.size(1)); 
-                SPDLOG_INFO("Hot spot 5 failed, gradient size {}", values.size(1))
+                SPDLOG_INFO("Hot spot 5 failed, buffer size {}", dataloader_->graph_storage_->storage_ptrs_.node_embeddings->data_.size(1)); 
+                SPDLOG_INFO("Hot spot 5 failed, gradient size {}", batch->node_gradients_.size(1))
             }
             // modify to be pr
             // model_->train_batch(batch);
