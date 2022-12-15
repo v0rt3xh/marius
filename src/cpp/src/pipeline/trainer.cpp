@@ -178,9 +178,12 @@ void SynchronousTrainer::train(int num_epochs) {
             }
             */
             // In the case of PageRank, we gotta update the embeddings once more :)
+            /**
             if (batch->node_embeddings_.defined() && dataloader_->batches_left_ == 1) 
             {
-                auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
+                batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
+                auto gradientAccess = batch->node_embeddings_.accessor<float,2>();
+                auto gradientAccess = batch->node_embeddings_.accessor<float,2>();
                 for (long i = 0; i < batch->node_embeddings_.size(0); i++) 
                 {
                     
@@ -190,7 +193,7 @@ void SynchronousTrainer::train(int num_epochs) {
                     embeddingAccess[i][1] = 0;
                 }
             }
-
+            */
             batch->clear();
 
             // notify that the batch has been completed
