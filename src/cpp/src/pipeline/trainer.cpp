@@ -121,8 +121,9 @@ void SynchronousTrainer::train(int num_epochs) {
             }
             */
 
-            batch->dense_graph_.performMap();   
-
+            batch->dense_graph_.performMap();  
+            // Need this function to let things work, maybe
+            // batch->embeddingsToHost();
             // Directly start updates.
             torch::Tensor src; 
             torch::Tensor dst;
@@ -136,8 +137,8 @@ void SynchronousTrainer::train(int num_epochs) {
                 // We directly initialize the gradients here. 
                 int sizeOfBatch = src.size(0);
                 SPDLOG_INFO("Batch Size is {}", sizeOfBatch);
-                SPDLOG_INFO("Embedding Dim 0 is {}", node_embeddings_.size(0));
-                SPDLOG_INFO("Embedding Dim 1 is {}", node_embeddings_.size(-1));
+                SPDLOG_INFO("Embedding Dim 0 is {}", batch->node_embeddings_.size(0));
+                SPDLOG_INFO("Embedding Dim 1 is {}", batch->node_embeddings_.size(-1));
 
                 // Create the gradient matrix, needed??
                 // batch->node_gradients_ = torch::zeros(node_embeddings_.sizes());
