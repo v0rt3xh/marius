@@ -212,7 +212,14 @@ void SynchronousTrainer::train(int num_epochs) {
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
-
+            if (batch->node_embeddings_.defined()) 
+            {
+                if (dataloader_->graph_storage_->embeddingsOffDevice()) 
+                {
+                    batch->embeddingsToHost();
+                }
+                dataloader_->updateEmbeddings(batch, false);
+            } 
             // transfer gradients and update parameters
             /** Do nothing now
             if (batch->node_embeddings_.defined()) {
