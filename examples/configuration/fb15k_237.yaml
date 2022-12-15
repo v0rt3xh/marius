@@ -21,13 +21,13 @@ model:
       options:
         learning_rate: 0.1
 storage:
-  device_type: cuda
+  device_type: cpu
   dataset:
     dataset_dir: ./datasets/fb15k_237_example/
   edges:
-    type: DEVICE_MEMORY
+    type: HOST_MEMORY
   embeddings:
-    type: DEVICE_MEMORY
+    type: HOST_MEMORY
   save_model: true
 training:
   batch_size: 1000
