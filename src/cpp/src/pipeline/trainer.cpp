@@ -116,14 +116,14 @@ void SynchronousTrainer::train(int num_epochs) {
             }
             */
 
-           dataloader_->loadCPUParameters(batch);
+           // dataloader_->loadCPUParameters(batch);
             /**
             if (batch->node_embeddings_.defined()) {
                 batch->node_embeddings_.requires_grad_();
             }
             */
 
-            batch->dense_graph_.performMap();  
+            // batch->dense_graph_.performMap();  
             // Need this function to let things work, maybe
             // batch->embeddingsToHost();
             // Directly start updates.
@@ -156,11 +156,9 @@ void SynchronousTrainer::train(int num_epochs) {
                     auto tmpGradient = gradientAccess[dstAccess[i]][1];
                     tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
                     gradientAccess[dstAccess[i]][1] = tmpGradient;
-                    //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
-                    // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
-                SPDLOG_INFO("Test Gradient {}", gradientAccess[0][0]);
-                SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
+                // SPDLOG_INFO("Test Gradient {}", gradientAccess[0][0]);
+                // SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
                 // SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
                 // SPDLOG_INFO("Gradient dim {}", batch->node_gradients_ .size(0));
                 // Maybe something is wrong with updateEmbeddings?
