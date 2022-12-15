@@ -132,7 +132,7 @@ void SynchronousTrainer::train(int num_epochs) {
             torch::Tensor dst;
             if (batch->node_embeddings_.defined()) 
             {
-                batch->node_gradients_ = torch::zeros(node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
+                batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
                 src = batch->edges_.select(1, 0);
                 dst = batch->edges_.select(1, -1);
             
