@@ -132,7 +132,7 @@ void SynchronousTrainer::train(int num_epochs) {
             torch::Tensor dst;
             if (batch->node_embeddings_.defined()) 
             {
-                
+                batch->node_gradients_ = torch::zeros(node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
                 src = batch->edges_.select(1, 0);
                 dst = batch->edges_.select(1, -1);
             
@@ -149,15 +149,18 @@ void SynchronousTrainer::train(int num_epochs) {
                 //auto gradAccess = batch->node_gradients_.accessor<float,2>();
                 auto srcAccess = src.accessor<long, 1>();
                 auto dstAccess = dst.accessor<long, 1>();
+                auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
                 // compute the updates for pagerank
                 for (long i = 0; i < sizeOfBatch; i++) 
                 {
-                    embeddingAccess[dstAccess[i]][1] += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
+                    gradientAccess[dstAccess[i]][1] += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
                     //SPDLOG_INFO("New dst Embedding: {} ", embeddingAccess[dstAccess[i]][1]);
                     // SPDLOG_INFO("Pre src Embedding: {} ", embeddingAccess[srcAccess[i]][0]);
                 }
                 SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
-            } 
+                dataloader_->updateEmbeddings(batch, false);
+                batch->node_gradients_ = torch::empty(1);
+            }
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
