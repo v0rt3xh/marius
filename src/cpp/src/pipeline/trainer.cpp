@@ -178,7 +178,7 @@ void SynchronousTrainer::train(int num_epochs) {
             if (batch->node_embeddings_.defined() && dataloader_->batches_left_ == 1) 
             {
                 auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
-                for (long i = 0; i < node_embeddings_.size(0); i++) 
+                for (long i = 0; i < batch->node_embeddings_.size(0); i++) 
                 {
                     
                     embeddingAccess[i][1] *= 0.85;
