@@ -157,8 +157,8 @@ void SynchronousTrainer::train(int num_epochs) {
                     tmpGradient += embeddingAccess[srcAccess[i]][0] / (embeddingAccess[srcAccess[i]][2] + 1e-3);
                     gradientAccess[dstAccess[i]][1] = tmpGradient;
                 }
-                gradientAccess[0][1] += 0.00005;
-                SPDLOG_INFO("Test Gradient #1 {}", gradientAccess[0][1]);
+                // gradientAccess[0][1] += 0.00005;
+                // SPDLOG_INFO("Test Gradient #1 {}", gradientAccess[0][1]);
                 // SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][0]);
                 // SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
                 // SPDLOG_INFO("Gradient dim {}", batch->node_gradients_ .size(0));
@@ -166,12 +166,49 @@ void SynchronousTrainer::train(int num_epochs) {
                 // dataloader_->updateEmbeddings(batch, false);
                 // batch->node_gradients_ = torch::empty(1);
             }
-            if(batch->node_gradients_.defined()) 
+            // Checkout the potential error:
+            if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->device_ != torch::kCUDA) 
             {
-                auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
-                gradientAccess[0][1] += 0.00005;
-                SPDLOG_INFO("Test Gradient #2 {}", gradientAccess[0][1]);
-            } 
+               SPDLOG_INFO("Hot spot 1 passed"); 
+            }
+            else 
+            {
+               SPDLOG_INFO("Hot spot 1 failed"); 
+            }
+            if (batch->unique_node_indices_.size(0) == batch->node_gradients_.size(0)) 
+            {
+               SPDLOG_INFO("Hot spot 2 passed"); 
+            }
+            else 
+            {
+                SPDLOG_INFO("Hot spot 2 failed, indices {}", batch->unique_node_indices_.size(0));
+                SPDLOG_INFO("Hot spot 2 failed, gradients {}", batch->node_gradients_.size(0));  
+            }
+            if (batch->unique_node_indices_.sizes().size() == 1) 
+            {
+               SPDLOG_INFO("Hot spot 3 passed"); 
+            }
+            else 
+            {
+               SPDLOG_INFO("Hot spot 3 failed, indices {}", batch->unique_node_indices_.sizes().size()); 
+            }
+            if (batch->node_gradients_.defined()) 
+            {
+               SPDLOG_INFO("Hot spot 4 passed"); 
+            }
+            else 
+            {
+               SPDLOG_INFO("Hot spot 4 failed with no defined gradients");  
+            }
+            if (graph_storage_->storage_ptrs_.node_embeddings->buffer_->buffer_tensor_view_.size(1) == values.size(1)) 
+            {
+                SPDLOG_INFO("Hot spot 5 passed"); 
+            }
+            else 
+            {
+                SPDLOG_INFO("Hot spot 5 failed, buffer size {}", graph_storage_->storage_ptrs_.node_embeddings->buffer_->buffer_tensor_view_.size(1)); 
+                SPDLOG_INFO("Hot spot 5 failed, gradient size {}", values.size(1))
+            }
             // modify to be pr
             // model_->train_batch(batch);
             // model_->train_pr(batch);
