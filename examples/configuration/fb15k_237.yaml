@@ -36,13 +36,14 @@ training:
     negatives_per_positive: -1
     degree_fraction: 0.0
     filtered: false
-  num_epochs: 100
+  num_epochs: 1
   pipeline:
     sync: true
   epochs_per_shuffle: 100
 evaluation:
-  batch_size: 1000
-  negative_sampling:
-    filtered: true
-  pipeline:
-    sync: true
+  epochs_per_eval: -1
+#  batch_size: 1000
+#  negative_sampling:
+#    filtered: true
+#  pipeline:
+#    sync: true
