@@ -6,6 +6,7 @@
 
 #include "reporting/logger.h"
 
+
 using std::get;
 using std::tie;
 
@@ -106,7 +107,42 @@ void SynchronousTrainer::train(int num_epochs) {
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-
+            if (dataloader_->epochs_processed_ == 0 && dataloader_->batches_processed_ == 0) 
+            {
+                std::ifstream in("outDegrees.txt");
+                std::unordered_map<int, int> outDegreeMap;
+                for (std::string nodeIdx, outDegree;
+                     std::getline(in, nodeIdx, ' ') && std::getline(in, outDegree);)
+                    {
+                        outDegreeMap[std::stoi(nodeIdx)] = std::stoi(outDegree);
+                    }
+                batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
+                auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
+                //auto gradAccess = batch->node_gradients_.accessor<float,2>();
+                auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
+                float init_value = 1 / batch->node_embeddings_.size(0);
+                for (int i = 0; i < batch->node_embeddings_.size(0); i++) 
+                {
+                    gradientAccess[i][1] = -embeddingAccess[i][1];
+                    gradientAccess[i][0] = init_value - embeddingAccess[i][0];
+                    auto tmpValue = embeddingAccess[i][2];
+                    float outDegree;
+                    if (outDegeeMap.find(i) == outDegeeMap.end()) 
+                    {
+                        outDegree = 1;
+                    }
+                    else 
+                    {
+                        outDegree = outDegeeMap[i];
+                    }
+                    embeddingAccess[i][2] = outDegee - tmpValue;
+                }
+                if (dataloader_->graph_storage_->embeddingsOffDevice()) 
+                {
+                    batch->embeddingsToHost();
+                }
+                dataloader_->updateEmbeddings(batch, false);              
+            }
             /**
             if (dataloader_->graph_storage_->embeddingsOffDevice()) {
                 // transfers batch to the GPU
