@@ -109,7 +109,7 @@ void SynchronousTrainer::train(int num_epochs) {
             shared_ptr<Batch> batch = dataloader_->getBatch();
             if (dataloader_->epochs_processed_ == 0 && dataloader_->batches_processed_ == 0) 
             {
-                SPDLOG_INFO("=======Initializing the embeddings======")
+                SPDLOG_INFO("=======Initializing the embeddings======");
                 std::ifstream in("outDegrees.txt");
                 std::unordered_map<int, int> outDegreeMap;
                 for (std::string nodeIdx, outDegree;
