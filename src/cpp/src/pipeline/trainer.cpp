@@ -5,7 +5,11 @@
 #include "pipeline/trainer.h"
 
 #include "reporting/logger.h"
+#include <chrono>
+#include <ratio>
 
+using std::chrono::high_resolution_clock;
+using std::chrono::duration;
 
 using std::get;
 using std::tie;
@@ -100,14 +104,18 @@ void SynchronousTrainer::train(int num_epochs) {
     dataloader_->initializeBatches(false);
 
     Timer timer = Timer(false);
-
+    high_resolution_clock::time_point start;
+    high_resolution_clock::time_point end;
+    duration<double, std::milli> duration_sec;
+    double overallRunTime = 0;
     for (int epoch = 0; epoch < num_epochs; epoch++) {
         timer.start();
+        start = high_resolution_clock::now();
         SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
-            if (dataloader_->epochs_processed_ == 0 && dataloader_->batches_processed_ == 0) 
+            if (dataloader_->epochs_processed_ == 0 && dataloader_->total_batches_processed_== 0) 
             {
                 SPDLOG_INFO("=======Initializing the embeddings======");
                 std::ifstream in("outDegrees.txt");
@@ -196,59 +204,13 @@ void SynchronousTrainer::train(int num_epochs) {
                 }
                 // gradientAccess[0][1] += 0.00005;
                 // SPDLOG_INFO("Test Gradient #1 {}", gradientAccess[0][1]);
-                SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][1]);
+                // SPDLOG_INFO("Test Embedding {}", embeddingAccess[0][1]);
                 // SPDLOG_INFO("Unique Indices dim {}", batch->unique_node_indices_.size(0));
                 // SPDLOG_INFO("Gradient dim {}", batch->node_gradients_ .size(0));
                 // Maybe something is wrong with updateEmbeddings?
                 // dataloader_->updateEmbeddings(batch, false);
                 // batch->node_gradients_ = torch::empty(1);
             }
-            // Checkout the potential error:
-/*             if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->device_ != torch::kCUDA) 
-            {
-               SPDLOG_INFO("Hot spot 1 passed"); 
-            }
-            else 
-            {
-               SPDLOG_INFO("Hot spot 1 failed"); 
-            }
-            if (batch->unique_node_indices_.size(0) == batch->node_gradients_.size(0)) 
-            {
-               SPDLOG_INFO("Hot spot 2 passed"); 
-            }
-            else 
-            {
-                SPDLOG_INFO("Hot spot 2 failed, indices {}", batch->unique_node_indices_.size(0));
-                SPDLOG_INFO("Hot spot 2 failed, gradients {}", batch->node_gradients_.size(0));  
-            }
-            if (batch->unique_node_indices_.sizes().size() == 1) 
-            {
-               SPDLOG_INFO("Hot spot 3 passed"); 
-            }
-            else 
-            {
-               SPDLOG_INFO("Hot spot 3 failed, indices {}", batch->unique_node_indices_.sizes().size()); 
-            }
-            if (batch->node_gradients_.defined()) 
-            {
-               SPDLOG_INFO("Hot spot 4 passed"); 
-            }
-            else 
-            {
-               SPDLOG_INFO("Hot spot 4 failed with no defined gradients");  
-            }
-            if (dataloader_->graph_storage_->storage_ptrs_.node_embeddings->data_.size(1) == batch->node_gradients_.size(1)) 
-            {
-                SPDLOG_INFO("Hot spot 5 passed"); 
-            }
-            else 
-            {
-                SPDLOG_INFO("Hot spot 5 failed, buffer size {}", dataloader_->graph_storage_->storage_ptrs_.node_embeddings->data_.size(1)); 
-                SPDLOG_INFO("Hot spot 5 failed, gradient size {}", batch->node_gradients_.size(1));
-            } */
-            // modify to be pr
-            // model_->train_batch(batch);
-            // model_->train_pr(batch);
             if (batch->node_embeddings_.defined()) 
             {
                 if (dataloader_->graph_storage_->embeddingsOffDevice()) 
@@ -278,35 +240,9 @@ void SynchronousTrainer::train(int num_epochs) {
                 }
                 dataloader_->updateEmbeddings(batch, false);
             }
-            // transfer gradients and update parameters
-            /** Do nothing now
-            if (batch->node_embeddings_.defined()) {
-                if (dataloader_->graph_storage_->embeddingsOffDevice()) {
-                    batch->embeddingsToHost();
-                } else {
-                    dataloader_->updateEmbeddings(batch, true);
-                }
-
-                dataloader_->updateEmbeddings(batch, false);
-            }
-            */
-            // In the case of PageRank, we gotta update the embeddings once more :)
-            /**
-            if (batch->node_embeddings_.defined() && dataloader_->batches_left_ == 1) 
-            {
-                batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
-                auto gradientAccess = batch->node_embeddings_.accessor<float,2>();
-                auto gradientAccess = batch->node_embeddings_.accessor<float,2>();
-                for (long i = 0; i < batch->node_embeddings_.size(0); i++) 
-                {
-                    
-                    embeddingAccess[i][1] *= 0.85;
-                    embeddingAccess[i][1] += 0.15;
-                    embeddingAccess[i][0] = embeddingAccess[i][1];
-                    embeddingAccess[i][1] = 0;
-                }
-            }
-            */
+            end = high_resolution_clock::now();
+            duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
+            overallRunTime += duration_sec.count();
             // Clear batch here, not immediately after updating!
             batch->clear();
 
@@ -332,7 +268,7 @@ void SynchronousTrainer::train(int num_epochs) {
             item_name = "Nodes";
             num_items = dataloader_->graph_storage_->storage_ptrs_.train_nodes->getDim0();
         }
-
+        SPDLOG_INFO("Overall Runtime: {} ms", overallRunTime);
         int64_t epoch_time = timer.getDuration();
         float items_per_second = (float)num_items / ((float)epoch_time / 1000);
         SPDLOG_INFO("Epoch Runtime: {}ms", epoch_time);
