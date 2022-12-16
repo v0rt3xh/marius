@@ -135,7 +135,7 @@ void SynchronousTrainer::train(int num_epochs) {
                     {
                         outDegree = outDegeeMap[i];
                     }
-                    embeddingAccess[i][2] = outDegee - tmpValue;
+                    gradientAccess[i][2] = outDegee - tmpValue;
                 }
                 if (dataloader_->graph_storage_->embeddingsOffDevice()) 
                 {
