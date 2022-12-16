@@ -110,10 +110,10 @@ void SynchronousTrainer::train(int num_epochs) {
     double overallRunTime = 0;
     for (int epoch = 0; epoch < num_epochs; epoch++) {
         timer.start();
-        start = high_resolution_clock::now();
         SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
+            start = high_resolution_clock::now();
             shared_ptr<Batch> batch = dataloader_->getBatch();
             if (dataloader_->epochs_processed_ == 0 && dataloader_->total_batches_processed_== 0) 
             {
@@ -240,15 +240,14 @@ void SynchronousTrainer::train(int num_epochs) {
                 }
                 dataloader_->updateEmbeddings(batch, false);
             }
-            end = high_resolution_clock::now();
-            duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
-            overallRunTime += duration_sec.count();
             // Clear batch here, not immediately after updating!
             batch->clear();
 
             // notify that the batch has been completed
             dataloader_->finishedBatch();
-
+            end = high_resolution_clock::now();
+            duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
+            overallRunTime += duration_sec.count();
             // log progress
             progress_reporter_->addResult(batch->batch_size_);
         }
@@ -268,10 +267,11 @@ void SynchronousTrainer::train(int num_epochs) {
             item_name = "Nodes";
             num_items = dataloader_->graph_storage_->storage_ptrs_.train_nodes->getDim0();
         }
-        SPDLOG_INFO("Overall Runtime: {} ms", overallRunTime);
+        
         int64_t epoch_time = timer.getDuration();
         float items_per_second = (float)num_items / ((float)epoch_time / 1000);
         SPDLOG_INFO("Epoch Runtime: {}ms", epoch_time);
         SPDLOG_INFO("{} per Second: {}", item_name, items_per_second);
     }
+    SPDLOG_INFO("Overall Runtime: {} ms", overallRunTime);
 }
