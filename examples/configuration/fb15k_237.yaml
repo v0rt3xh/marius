@@ -3,11 +3,11 @@ model:
   encoder:
     layers:
       - - type: EMBEDDING
-          output_dim: 50
+          output_dim: 3
   decoder:
     type: DISTMULT
     options:
-      input_dim: 50
+      input_dim: 3
   loss:
     type: SOFTMAX_CE
     options:
