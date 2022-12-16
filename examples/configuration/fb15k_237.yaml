@@ -40,10 +40,10 @@ training:
   pipeline:
     sync: true
   epochs_per_shuffle: 100
-#evaluation:
-#  epochs_per_eval: -1
-#  batch_size: 1000
-#  negative_sampling:
-#    filtered: true
-#  pipeline:
-#    sync: true
+evaluation: 
+  epochs_per_eval: 101
+  batch_size: 1000
+  negative_sampling:
+    filtered: true
+  pipeline:
+    sync: true
