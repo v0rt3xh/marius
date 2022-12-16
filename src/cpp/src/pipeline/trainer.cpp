@@ -5,11 +5,7 @@
 #include "pipeline/trainer.h"
 
 #include "reporting/logger.h"
-#include <chrono>
-#include <ratio>
 
-using std::chrono::high_resolution_clock;
-using std::chrono::duration;
 
 using std::get;
 using std::tie;
@@ -103,17 +99,12 @@ void SynchronousTrainer::train(int num_epochs) {
 
     dataloader_->initializeBatches(false);
 
-    Timer timer = Timer(false);
-    high_resolution_clock::time_point start;
-    high_resolution_clock::time_point end;
-    duration<double, std::milli> duration_sec;
-    double overallRunTime = 0;
+//    Timer timer = Timer(false);
     for (int epoch = 0; epoch < num_epochs; epoch++) {
-        timer.start();
+        //timer.start();
         SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
-            start = high_resolution_clock::now();
             shared_ptr<Batch> batch = dataloader_->getBatch();
             if (dataloader_->epochs_processed_ == 0 && dataloader_->total_batches_processed_== 0) 
             {
@@ -245,21 +236,20 @@ void SynchronousTrainer::train(int num_epochs) {
 
             // notify that the batch has been completed
             dataloader_->finishedBatch();
-            end = high_resolution_clock::now();
-            duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
-            overallRunTime += duration_sec.count();
+
             // log progress
-            progress_reporter_->addResult(batch->batch_size_);
+            // progress_reporter_->addResult(batch->batch_size_);
         }
         SPDLOG_INFO("################ Finished training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         
         // notify that the epoch has been completed
         dataloader_->nextEpoch();
-        progress_reporter_->clear();
-        timer.stop();
+        // progress_reporter_->clear();
+        //timer.stop();
 
-        std::string item_name;
-        int64_t num_items = 0;
+        //std::string item_name;
+        //int64_t num_items = 0;
+        /**
         if (learning_task_ == LearningTask::LINK_PREDICTION) {
             item_name = "Edges";
             num_items = dataloader_->graph_storage_->storage_ptrs_.train_edges->getDim0();
@@ -272,6 +262,7 @@ void SynchronousTrainer::train(int num_epochs) {
         float items_per_second = (float)num_items / ((float)epoch_time / 1000);
         SPDLOG_INFO("Epoch Runtime: {}ms", epoch_time);
         SPDLOG_INFO("{} per Second: {}", item_name, items_per_second);
+        */
     }
-    SPDLOG_INFO("Overall Runtime: {} ms", overallRunTime);
+
 }

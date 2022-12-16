@@ -9,6 +9,11 @@
 #include "reporting/logger.h"
 #include "storage/checkpointer.h"
 #include "storage/io.h"
+#include <chrono>
+#include <ratio>
+
+using std::chrono::high_resolution_clock;
+using std::chrono::duration;
 
 void encode_and_export(shared_ptr<DataLoader> dataloader, shared_ptr<Model> model, shared_ptr<MariusConfig> marius_config) {
     shared_ptr<GraphEncoder> graph_encoder;
@@ -132,11 +137,17 @@ void marius_train(shared_ptr<MariusConfig> marius_config) {
     } else {
         evaluator = std::make_shared<PipelineEvaluator>(dataloader, model, marius_config->evaluation->pipeline);
     }
-
+    high_resolution_clock::time_point start;
+    high_resolution_clock::time_point end;
+    duration<double, std::milli> duration_sec;
+    double overallRunTime = 0;
     int checkpoint_interval = marius_config->training->checkpoint->interval;
     for (int epoch = 0; epoch < marius_config->training->num_epochs; epoch++) {
+        start = high_resolution_clock::now();
         trainer->train(1);
-
+        end = high_resolution_clock::now();
+        duration_sec = std::chrono::duration_cast<duration<double, std::milli> >(end - start);
+        overallRunTime += duration_sec.count();
         if ((epoch + 1) % marius_config->evaluation->epochs_per_eval == 0) {
             if (marius_config->storage->dataset->num_valid != -1) {
                 evaluator->evaluate(true);
@@ -152,6 +163,7 @@ void marius_train(shared_ptr<MariusConfig> marius_config) {
             model_saver->create_checkpoint(marius_config->storage->model_dir, metadata, dataloader->epochs_processed_);
         }
     }
+    SPDLOG_INFO("Overall Runtime: {} ms", overallRunTime);
 
     if (marius_config->training->save_model) {
         model_saver->save(marius_config->storage->model_dir, metadata);
