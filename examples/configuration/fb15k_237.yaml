@@ -28,18 +28,18 @@ storage:
     type: HOST_MEMORY
   embeddings:
     type: HOST_MEMORY
-  save_model: true
+  save_model: false
 training:
-  batch_size: 1000
+  batch_size: 512
   negative_sampling:
     num_chunks: 1
     negatives_per_positive: -1
     degree_fraction: 0.0
     filtered: false
-  num_epochs: 10
+  num_epochs: 100
   pipeline:
     sync: true
-  epochs_per_shuffle: 1
+  epochs_per_shuffle: 100
 evaluation:
   batch_size: 1000
   negative_sampling:
