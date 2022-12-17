@@ -102,13 +102,13 @@ void SynchronousTrainer::train(int num_epochs) {
 //    Timer timer = Timer(false);
     for (int epoch = 0; epoch < num_epochs; epoch++) {
         //timer.start();
-        SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
+        // SPDLOG_INFO("################ Starting training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         while (dataloader_->hasNextBatch()) {
             // gets data and parameters for the next batch
             shared_ptr<Batch> batch = dataloader_->getBatch();
             if (dataloader_->epochs_processed_ == 0 && dataloader_->total_batches_processed_== 0) 
             {
-                SPDLOG_INFO("=======Initializing the embeddings======");
+                // SPDLOG_INFO("=======Initializing the embeddings======");
                 std::ifstream in("outDegrees.txt");
                 std::unordered_map<int, int> outDegreeMap;
                 for (std::string nodeIdx, outDegree;
@@ -213,7 +213,7 @@ void SynchronousTrainer::train(int num_epochs) {
             // We need to do a final update, if at the end of one epoch.
             if (dataloader_->batches_left_ == 1) 
             {
-                SPDLOG_INFO("========Reaches the end of an epoch, performs importance swapping.");
+                //SPDLOG_INFO("========Reaches the end of an epoch, performs importance swapping.");
                 batch->node_gradients_ = torch::zeros(batch->node_embeddings_.sizes(), torch::TensorOptions().dtype(torch::kFloat32));
                 auto gradientAccess = batch->node_gradients_.accessor<float, 2>();
                 auto embeddingAccess = batch->node_embeddings_.accessor<float,2>();
@@ -240,7 +240,7 @@ void SynchronousTrainer::train(int num_epochs) {
             // log progress
             // progress_reporter_->addResult(batch->batch_size_);
         }
-        SPDLOG_INFO("################ Finished training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
+        //SPDLOG_INFO("################ Finished training epoch {} ################", dataloader_->getEpochsProcessed() + 1);
         
         // notify that the epoch has been completed
         dataloader_->nextEpoch();
